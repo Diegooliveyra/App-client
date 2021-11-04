@@ -1,0 +1,15 @@
+mat-toolbar,mat-card {
+  margin-bottom: 2rem;
+}
+
+.main {
+  width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+mat-card {
+  min-width: 280px
+}
