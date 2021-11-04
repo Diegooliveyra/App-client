@@ -3,7 +3,7 @@ mat-toolbar,mat-card {
 }
 
 .main {
-  width: 1440px;
+  width: 1480px;
   margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
@@ -11,5 +11,5 @@ mat-toolbar,mat-card {
 }
 
 mat-card {
-  min-width: 280px
+  min-width: 300px
 }

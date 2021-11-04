@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
 import { toArray } from 'rxjs/operators';
+import { DialogEditProductComponent } from './dialog-edit-product/dialog-edit-product.component';
 import { Product } from './Models/product.interface';
 import { ProductsService } from './services/products.service';
 
@@ -16,11 +18,14 @@ export class AppComponent implements OnInit {
   productsLoading: Product[];
   loading: boolean = false;
   productsId: Product[];
-  newlyProducts: Product[]
+  newlyProducts: Product[] = [];
+  prodsToDelete: Product[];
+  prodsToEdit: Product[];
 
   constructor(
     private productService: ProductsService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {}
@@ -89,7 +94,7 @@ export class AppComponent implements OnInit {
     );
   }
 
-  loadName(id: number) {
+  loadName(id: any) {
     this.productService.getProductID(id).subscribe(({ name }: any) => {
       let index = this.productsId.findIndex((p) => p.id === id);
       if (index >= 0) {
@@ -98,8 +103,56 @@ export class AppComponent implements OnInit {
     });
   }
 
+  saveProduct(name: string, departament: string, price: any) {
+    let produto = { name, departament, price };
+    this.productService.saveProduct(produto).subscribe(
+      (r) => {
+        this.newlyProducts.push(r);
+      },
+      (error) => console.log(error)
+    );
+  }
 
-  saveProduct(){
+  deleteProduct(id: any) {
+    this.productService.deleteProduct(id).subscribe(
+      (response) => {
+        console.log(response);
+        let index = this.prodsToDelete.findIndex((prod) => id === prod.id);
+        if (index >= 0) {
+          this.prodsToDelete.splice(index, 1);
+        }
+      },
+      (error) => console.log(error)
+    );
+  }
 
+  loadProdutsToDelete() {
+    this.productService
+      .getProducts()
+      .subscribe((products) => (this.prodsToDelete = products));
+  }
+
+  editProduct(p: Product) {
+    let newProduct: Product = { ...p };
+
+    let dialogRef = this.dialog.open(DialogEditProductComponent, {
+      width: '400',
+      data: newProduct,
+    });
+
+    dialogRef.afterClosed().subscribe((res) => {
+      this.productService.editProduct(res.id, res).subscribe((res) => {
+        let index = this.prodsToEdit.findIndex((prod) => res.id === prod.id);
+        if (index >= 0) {
+          this.prodsToEdit[index] = res;
+        }
+      });
+    });
+  }
+
+  loadProdutsToEdit() {
+    this.productService
+      .getProducts()
+      .subscribe((products) => (this.prodsToEdit = products));
   }
 }

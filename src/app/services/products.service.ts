@@ -29,4 +29,16 @@ export class ProductsService {
   getProductID(id:number):Observable<Product[]> {
     return this.http.get<Product[]>(`${this.url}/products/${id}`);
   }
+
+  saveProduct(body:Product):Observable<Product>{
+    return this.http.post<Product>(`${this.url}/products`, body)
+  }
+
+  deleteProduct(id:number):Observable<Product>{
+    return this.http.delete<Product>(`${this.url}/products/${id}`)
+  }
+
+  editProduct(id:number, body: Product):Observable<Product>{
+    return this.http.patch<Product>(`${this.url}/products/${id}`, body)
+  }
 }
